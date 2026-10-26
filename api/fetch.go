@@ -6,15 +6,28 @@ import (
 	"net/http"
 )
 
+// fetchJSON télécharge le JSON d'une adresse et le range dans target.
+func fetchJSON(url string, target any) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("échec de la récupération de %s : %s", url, resp.Status)
+	}
+	return json.NewDecoder(resp.Body).Decode(target)
+}
+
 func FetchArtists() ([]Artist, error) {
 	var artists []Artist
 
-	err := fetchJSON("https://groupietrackers.herokuapp.com/api/artists", &artists) //&artists sait où ranger sans & il fait une copie et artists serait vide
+	err := fetchJSON("https://groupietrackers.herokuapp.com/api/artists", &artists)
 	if err != nil {
 		return nil, err
 	}
 
-	return artists, nil //On renvoit la boîte remplie
+	return artists, nil
 }
 
 func FetchLocations() (LocationsIndex, error) {
@@ -50,15 +63,30 @@ func FetchRelations() (RelationsIndex, error) {
 	return relations, nil
 }
 
-// FetchJSON permet de récupérer des données JSON à partir d'une URL et de les décoder dans la bonne structure ( TARGET ).
-func fetchJSON(url string, target any) error {
-	resp, err := http.Get(url)
+// LoadData appelle les quatre Fetch et range tout dans un seul classeur.
+func LoadData() (DataAPI, error) {
+	var data DataAPI
+	var err error
+
+	data.Artists, err = FetchArtists()
 	if err != nil {
-		return err //retourne l'erreur si ça échoue
+		return DataAPI{}, err
 	}
-	defer resp.Body.Close() //Si rien trouvé on ferme la connexion
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("échec de la récupération des données: %s", resp.Status)
+
+	data.Locations, err = FetchLocations()
+	if err != nil {
+		return DataAPI{}, err
 	}
-	return json.NewDecoder(resp.Body).Decode(target) //il lit si tout va bien et le range avec target
+
+	data.Dates, err = FetchDates()
+	if err != nil {
+		return DataAPI{}, err
+	}
+
+	data.Relations, err = FetchRelations()
+	if err != nil {
+		return DataAPI{}, err
+	}
+
+	return data, nil
 }

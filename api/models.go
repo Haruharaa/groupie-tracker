@@ -1,5 +1,12 @@
 package api
 
+type DataAPI struct {
+	Artists   []Artist
+	Locations LocationsIndex
+	Dates     DatesIndex
+	Relations RelationsIndex
+}
+
 type Artist struct {
 	ID           int      `json:"id"`
 	Image        string   `json:"image"`

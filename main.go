@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"groupie-tracker/api"
 	"log"
 	"net/http"
-	"groupie-tracker/api"
 )
 
 func accueil(w http.ResponseWriter, r *http.Request) {
@@ -19,6 +19,14 @@ func main() {
 	fmt.Println("Artistes récupérés avec succès:")
 	for _, artist := range artists {
 		fmt.Printf("ID: %d, Nom: %s\n", artist.ID, artist.Name)
+	}
+	locations, err := api.FetchLocations()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Lieux récupérés avec succès :")
+	for _, loc := range locations.Index {
+		fmt.Printf("ID: %d, %d lieux : %v\n", loc.ID, len(loc.Locations), loc.Locations)
 	}
 	http.HandleFunc("/", accueil)
 	fmt.Println("Le serveur est lancé sur http://localhost:8080")

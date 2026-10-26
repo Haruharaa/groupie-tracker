@@ -1,0 +1,9 @@
+.grille {
+    display: grid ;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.carte img {
+    border-radius: 10px;
+}

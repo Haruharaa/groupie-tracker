@@ -1,0 +1,338 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Groupie Tracker Tâches</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout : une colonne de lecture ; chaque phase est une "setlist" de tâches, résumé par personne en tête */
+:root {
+  --bg: #f3f5f4;
+  --surface: #ffffff;
+  --fg: #17201d;
+  --muted: #5d6b66;
+  --line: #d9e0dd;
+  --accent: #0d7a6a;
+  --accent-soft: #dcefeb;
+  --a: #2f5fd0;
+  --a-soft: #e3eafb;
+  --b: #b4521e;
+  --b-soft: #f8e7dc;
+  --ab: #6a4fb3;
+  --ab-soft: #ebe5f7;
+  --todo: #8a9893;
+  --doing: #c48a0c;
+  --doing-soft: #fbf0d4;
+  --done: #1f8a4c;
+  --done-soft: #dcf2e4;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111715; --surface: #18201d; --fg: #e6ece9; --muted: #98a6a1; --line: #2a3531;
+    --accent: #3cc2ab; --accent-soft: #163a34;
+    --a: #7ea0f5; --a-soft: #1d2846; --b: #f0915d; --b-soft: #3d2416; --ab: #b19bf0; --ab-soft: #2b2342;
+    --todo: #7c8a85; --doing: #f0c04f; --doing-soft: #3a3014; --done: #5fd08e; --done-soft: #173425;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111715; --surface: #18201d; --fg: #e6ece9; --muted: #98a6a1; --line: #2a3531;
+  --accent: #3cc2ab; --accent-soft: #163a34;
+  --a: #7ea0f5; --a-soft: #1d2846; --b: #f0915d; --b-soft: #3d2416; --ab: #b19bf0; --ab-soft: #2b2342;
+  --todo: #7c8a85; --doing: #f0c04f; --doing-soft: #3a3014; --done: #5fd08e; --done-soft: #173425;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+}
+.wrap {
+  max-width: 880px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 56px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+header { display: flex; flex-direction: column; gap: 8px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 5vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: 0; max-width: 62ch; }
+
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.person { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.person-top { display: flex; align-items: center; gap: 10px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.person input { font: inherit; font-weight: 700; color: var(--fg); background: transparent; border: 1px dashed transparent; border-radius: 6px; padding: 2px 6px; margin-left: -6px; min-width: 0; flex: 1; }
+.person input:hover { border-color: var(--line); }
+.person input:focus { outline: none; border-color: var(--accent); border-style: solid; }
+.count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.bar > span { display: block; height: 100%; border-radius: 3px; transition: width .3s; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.toolbar .label { font-size: 13px; color: var(--muted); margin-right: 4px; }
+.chip { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.chip:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.phase { display: flex; flex-direction: column; gap: 10px; }
+.phase-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; border-bottom: 2px solid var(--fg); padding-bottom: 6px; }
+.phase-code { font-family: var(--font-mono); font-size: 12px; background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 4px; }
+.phase h2 { font-family: var(--font-display); font-weight: 600; font-size: 21px; margin: 0; }
+.phase-note { color: var(--muted); font-size: 13px; margin: 0; flex-basis: 100%; }
+.phase-count { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+ul.tasks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+li.task { display: grid; grid-template-columns: 104px 1fr auto; gap: 12px; align-items: start; padding: 12px 0; border-bottom: 1px solid var(--line); }
+li.task.is-done .t-title { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--todo); }
+.t-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.t-title { font-weight: 700; }
+.t-hint { color: var(--muted); font-size: 13.5px; }
+.status { font: inherit; font-size: 12.5px; font-weight: 700; border-radius: 6px; padding: 5px 8px; cursor: pointer; border: 1px solid transparent; text-align: left; display: flex; align-items: center; gap: 6px; width: 100%; }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+.status[data-s="todo"] { background: transparent; color: var(--todo); border-color: var(--line); }
+.status[data-s="doing"] { background: var(--doing-soft); color: var(--doing); }
+.status[data-s="done"] { background: var(--done-soft); color: var(--done); }
+.t-side { display: flex; align-items: center; gap: 6px; }
+select.owner { font: inherit; font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 4px 10px; border: 1px solid transparent; cursor: pointer; appearance: none; -webkit-appearance: none; }
+select.owner[data-o="a"] { background: var(--a-soft); color: var(--a); }
+select.owner[data-o="b"] { background: var(--b-soft); color: var(--b); }
+select.owner[data-o="ab"] { background: var(--ab-soft); color: var(--ab); }
+.del { font: inherit; font-size: 12px; background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px 6px; border-radius: 4px; }
+.del:hover { color: var(--fg); background: var(--line); }
+.del.confirm { color: #fff; background: #b4232c; }
+
+.add { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.add h2 { font-family: var(--font-display); font-weight: 600; font-size: 18px; margin: 0; }
+.add-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.add input, .add select { font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; min-width: 0; }
+.add input#new-title { flex: 1 1 260px; }
+.add input#new-hint { flex: 1 1 100%; }
+.add button { font: inherit; font-weight: 700; background: var(--accent); color: var(--surface); border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; }
+.msg { font-size: 13.5px; color: var(--muted); margin: 0; }
+.msg.err { color: #b4232c; }
+.empty { color: var(--muted); padding: 16px 0; margin: 0; }
+.legend { font-size: 13px; color: var(--muted); margin: 0; }
+@media (max-width: 560px) {
+  li.task { grid-template-columns: 1fr auto; }
+  li.task .status { grid-column: 1 / -1; width: auto; justify-self: start; }
+  .t-body { grid-column: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .bar > span { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Projet Ynov · Go · 2 personnes</span>
+    <h1>Groupie Tracker, qui fait quoi</h1>
+    <p class="lede">Une personne s'occupe surtout des données côté serveur, l'autre des pages HTML. Vous travaillez en parallèle et vous vous retrouvez sur les tâches « Ensemble ». Clique sur un statut pour le faire avancer, et change la personne avec la pastille de droite. Ce que vous changez est enregistré pour vous deux.</p>
+  </header>
+
+  <section class="summary" id="summary" aria-label="Avancement par personne"></section>
+
+  <div class="toolbar" role="group" aria-label="Filtrer par personne">
+    <span class="label">Afficher :</span>
+    <button class="chip" data-f="all" aria-pressed="true">Toutes</button>
+    <button class="chip" data-f="a" aria-pressed="false" id="f-a">Arthur</button>
+    <button class="chip" data-f="b" aria-pressed="false" id="f-b">Binôme</button>
+    <button class="chip" data-f="ab" aria-pressed="false">Ensemble</button>
+    <button class="chip" data-f="open" aria-pressed="false">Pas finies</button>
+  </div>
+
+  <p class="legend">Statut : À faire → En cours → Fait → À faire. Un clic fait passer à l'étape suivante.</p>
+
+  <div id="board"><p class="empty" id="loading">Chargement des tâches…</p></div>
+
+  <form class="add" id="add-form">
+    <h2>Ajouter une tâche</h2>
+    <div class="add-row">
+      <input id="new-title" placeholder="Titre de la tâche" required maxlength="120">
+      <select id="new-phase" aria-label="Phase"></select>
+      <select id="new-owner" aria-label="Personne"></select>
+    </div>
+    <div class="add-row">
+      <input id="new-hint" placeholder="Indice ou précision (facultatif)" maxlength="240">
+    </div>
+    <div class="add-row"><button type="submit">Ajouter</button></div>
+    <p class="msg" id="add-msg" aria-live="polite"></p>
+  </form>
+</div>
+
+<script>
+const PHASES = [
+  { code: "Étape 0", name: "Mise en place", note: "À faire ensemble, avant de vous répartir le travail." },
+  { code: "FT-1", name: "Récupérer les données", note: "Côté serveur : l'API, le JSON et les structs Go." },
+  { code: "FT-2", name: "Afficher les données", note: "Côté pages : html/template et CSS. Commencez avec de fausses données en attendant FT-1." },
+  { code: "FT-3", name: "Événement et erreurs", note: "Le serveur ne doit jamais planter : chaque erreur a sa page." },
+  { code: "Bonus", name: "Bonus B-1 à B-4", note: "Seulement quand FT-1 à FT-3 marchent parfaitement." }
+];
+const STATUS_NEXT = { todo: "doing", doing: "done", done: "todo" };
+const STATUS_LABEL = { todo: "À faire", doing: "En cours", done: "Fait" };
+
+let tasks = [];
+let names = { a: "Arthur", b: "Binôme" };
+let filter = "all";
+let db = null, canWrite = true, loaded = false;
+
+const $ = s => document.querySelector(s);
+const ownerLabel = o => o === "a" ? names.a : o === "b" ? names.b : "Ensemble";
+
+function render() {
+  renderSummary();
+  renderFilters();
+  const board = $("#board");
+  board.innerHTML = "";
+  if (!loaded) { board.innerHTML = '<p class="empty">Chargement des tâches…</p>'; return; }
+  if (!db) { board.innerHTML = '<p class="empty">Les tâches ne peuvent pas être chargées dans cette vue. Ouvre la page depuis claude.ai en étant connecté.</p>'; return; }
+  if (!tasks.length) { board.innerHTML = '<p class="empty">Aucune tâche pour l\'instant. Ajoute la première avec le formulaire ci-dessous.</p>'; return; }
+
+  PHASES.forEach((ph, i) => {
+    const all = tasks.filter(t => t.phase === i);
+    const shown = all.filter(matches);
+    if (!all.length) return;
+    const sec = document.createElement("section");
+    sec.className = "phase";
+    const done = all.filter(t => t.status === "done").length;
+    sec.innerHTML = `<div class="phase-head"><span class="phase-code"></span><h2></h2><span class="phase-count">${done}/${all.length}</span><p class="phase-note"></p></div>`;
+    sec.querySelector(".phase-code").textContent = ph.code;
+    sec.querySelector("h2").textContent = ph.name;
+    sec.querySelector(".phase-note").textContent = ph.note;
+    const ul = document.createElement("ul");
+    ul.className = "tasks";
+    if (!shown.length) {
+      const p = document.createElement("p"); p.className = "empty"; p.textContent = "Rien dans ce filtre pour cette phase.";
+      sec.appendChild(p);
+    }
+    shown.forEach(t => ul.appendChild(taskRow(t)));
+    sec.appendChild(ul);
+    board.appendChild(sec);
+  });
+}
+
+function matches(t) {
+  if (filter === "all") return true;
+  if (filter === "open") return t.status !== "done";
+  if (filter === "ab") return t.owner === "ab";
+  return t.owner === filter || t.owner === "ab";
+}
+
+function taskRow(t) {
+  const li = document.createElement("li");
+  li.className = "task" + (t.status === "done" ? " is-done" : "");
+  const st = document.createElement("button");
+  st.className = "status"; st.dataset.s = t.status; st.textContent = STATUS_LABEL[t.status] || "À faire";
+  st.title = "Passer à « " + STATUS_LABEL[STATUS_NEXT[t.status]] + " »";
+  st.disabled = !canWrite;
+  st.addEventListener("click", () => write(t.id, { status: STATUS_NEXT[t.status] || "todo" }));
+
+  const body = document.createElement("div"); body.className = "t-body";
+  const ti = document.createElement("span"); ti.className = "t-title"; ti.textContent = t.title;
+  body.appendChild(ti);
+  if (t.hint) { const h = document.createElement("span"); h.className = "t-hint"; h.textContent = t.hint; body.appendChild(h); }
+
+  const side = document.createElement("div"); side.className = "t-side";
+  const sel = document.createElement("select"); sel.className = "owner"; sel.dataset.o = t.owner;
+  sel.id = "owner-" + t.id; sel.setAttribute("aria-label", "Personne pour : " + t.title);
+  sel.disabled = !canWrite;
+  ["a", "b", "ab"].forEach(o => { const op = document.createElement("option"); op.value = o; op.textContent = ownerLabel(o); if (o === t.owner) op.selected = true; sel.appendChild(op); });
+  sel.addEventListener("change", () => write(t.id, { owner: sel.value }));
+  side.appendChild(sel);
+
+  if (canWrite) {
+    const del = document.createElement("button"); del.className = "del"; del.textContent = "Retirer"; del.type = "button";
+    let armed = false, timer;
+    del.addEventListener("click", () => {
+      if (!armed) { armed = true; del.textContent = "Confirmer ?"; del.classList.add("confirm"); timer = setTimeout(() => { armed = false; del.textContent = "Retirer"; del.classList.remove("confirm"); }, 3000); return; }
+      clearTimeout(timer);
+      db.collection("tasks").doc(t.id).delete().catch(onWriteError);
+    });
+    side.appendChild(del);
+  }
+  li.append(st, body, side);
+  return li;
+}
+
+function renderSummary() {
+  const box = $("#summary"); box.innerHTML = "";
+  [["a", "--a"], ["b", "--b"]].forEach(([o, c]) => {
+    const mine = tasks.filter(t => t.owner === o || t.owner === "ab");
+    const done = mine.filter(t => t.status === "done").length;
+    const doing = mine.filter(t => t.status === "doing").length;
+    const pct = mine.length ? Math.round(done / mine.length * 100) : 0;
+    const d = document.createElement("div"); d.className = "person";
+    d.innerHTML = `<div class="person-top"><span class="dot" style="background:var(${c})"></span><input id="name-${o}" maxlength="30" aria-label="Prénom"><span class="count">${done}/${mine.length} faites</span></div><div class="bar"><span style="width:${pct}%;background:var(${c})"></span></div><span class="count">${doing} en cours · tâches « Ensemble » comprises</span>`;
+    const inp = d.querySelector("input"); inp.value = names[o]; inp.disabled = !canWrite || !db;
+    inp.addEventListener("change", () => {
+      const v = inp.value.trim() || (o === "a" ? "Arthur" : "Binôme");
+      db.doc("settings/team").set({ ...names, [o]: v }).catch(onWriteError);
+    });
+    box.appendChild(d);
+  });
+}
+
+function renderFilters() {
+  $("#f-a").textContent = names.a; $("#f-b").textContent = names.b;
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.f === filter ? "true" : "false"));
+  const ph = $("#new-phase"), ow = $("#new-owner");
+  if (!ph.options.length) PHASES.forEach((p, i) => { const o = document.createElement("option"); o.value = i; o.textContent = p.code + " · " + p.name; ph.appendChild(o); });
+  const cur = ow.value || "a"; ow.innerHTML = "";
+  ["a", "b", "ab"].forEach(o => { const op = document.createElement("option"); op.value = o; op.textContent = ownerLabel(o); ow.appendChild(op); });
+  ow.value = cur;
+}
+
+document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+  filter = c.dataset.f;
+  try { localStorage.setItem("gt-filter", filter); } catch (e) {}
+  render();
+}));
+try { const f = localStorage.getItem("gt-filter"); if (f) filter = f; } catch (e) {}
+
+function write(id, patch) {
+  if (!db) return;
+  db.collection("tasks").doc(id).update(patch).catch(onWriteError);
+}
+function onWriteError(e) {
+  const m = $("#add-msg");
+  if (e && e.code === "invalid_argument") { canWrite = false; m.textContent = "Tu peux consulter ce tableau, mais pas le modifier. Demande à Arthur de te partager la page en tant que Contributor."; m.className = "msg err"; render(); return; }
+  m.textContent = "La modification n'a pas été enregistrée. Réessaie dans un instant."; m.className = "msg err";
+}
+
+$("#add-form").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const m = $("#add-msg");
+  if (!db || !canWrite) { m.textContent = "Impossible d'ajouter une tâche dans cette vue."; m.className = "msg err"; return; }
+  const title = $("#new-title").value.trim();
+  if (!title) { m.textContent = "Donne un titre à la tâche."; m.className = "msg err"; return; }
+  const phase = Number($("#new-phase").value);
+  const maxOrder = tasks.reduce((mx, t) => Math.max(mx, t.order || 0), 0);
+  try {
+    await db.collection("tasks").add({ title, hint: $("#new-hint").value.trim(), phase, owner: $("#new-owner").value, status: "todo", order: maxOrder + 1 });
+    $("#new-title").value = ""; $("#new-hint").value = "";
+    m.textContent = "Tâche ajoutée."; m.className = "msg";
+  } catch (e) { onWriteError(e); }
+});
+
+render();
+
+(async () => {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  try {
+    const user = await window.claude?.use?.("user");
+    if (user) { const w = await user.can("data.write"); if (w === false) canWrite = false; }
+  } catch (e) {}
+  if (!db) { loaded = true; render(); return; }
+  db.doc("settings/team").onSnapshot(s => {
+    if (s.exists) { const d = s.data(); names = { a: d.a || "Arthur", b: d.b || "Binôme" }; }
+    render();
+  }, () => {});
+  db.collection("tasks").orderBy("order").onSnapshot(snap => {
+    tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    loaded = true; render();
+  }, () => { loaded = true; render(); });
+})();
+</script>
+
+</body></html>

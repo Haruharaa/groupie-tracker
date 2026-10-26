@@ -28,6 +28,28 @@ func FetchLocations() (LocationsIndex, error) {
 	return locations, nil
 }
 
+func FetchDates() (DatesIndex, error) {
+	var dates DatesIndex
+
+	err := fetchJSON("https://groupietrackers.herokuapp.com/api/dates", &dates)
+	if err != nil {
+		return DatesIndex{}, err
+	}
+
+	return dates, nil
+}
+
+func FetchRelations() (RelationsIndex, error) {
+	var relations RelationsIndex
+
+	err := fetchJSON("https://groupietrackers.herokuapp.com/api/relation", &relations)
+	if err != nil {
+		return RelationsIndex{}, err
+	}
+
+	return relations, nil
+}
+
 // FetchJSON permet de récupérer des données JSON à partir d'une URL et de les décoder dans la bonne structure ( TARGET ).
 func fetchJSON(url string, target any) error {
 	resp, err := http.Get(url)

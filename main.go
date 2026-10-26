@@ -2,33 +2,36 @@ package main
 
 import (
 	"fmt"
-	"groupie-tracker/api"
 	"log"
 	"net/http"
+
+	"groupie-tracker/api"
 )
 
+// la data contient les données de l'API
+var data api.DataAPI
+
 func accueil(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	if len(data.Artists) == 0 {
+		fmt.Fprintln(w, "Aucun artiste n'a été chargé.")
+		return
+	}
+	fmt.Fprintf(w, "%d artistes chargés. Le premier est %s.\n", len(data.Artists), data.Artists[0].Name)
 }
 
 func main() {
-	artists, err := api.FetchArtists()
+	// On charge les données de l'API
+	var err error
+	data, err = api.LoadData()
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Artistes récupérés avec succès:")
-	for _, artist := range artists {
-		fmt.Printf("ID: %d, Nom: %s\n", artist.ID, artist.Name)
-	}
-	locations, err := api.FetchLocations()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Lieux récupérés avec succès :")
-	for _, loc := range locations.Index {
-		fmt.Printf("ID: %d, %d lieux : %v\n", loc.ID, len(loc.Locations), loc.Locations)
-	}
+	fmt.Println(len(data.Artists), "artistes chargés")
+
+	// 2. Relier les routes aux handlers
 	http.HandleFunc("/", accueil)
+
+	// 3. Démarrer le serveur
 	fmt.Println("Le serveur est lancé sur http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

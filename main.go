@@ -15,6 +15,10 @@ var data api.DataAPI
 
 // accueil affiche la page d'accueil avec la liste de tous les artistes.
 func accueil(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.Error(w, "Cette page n'existe pas", http.StatusNotFound)
+		return
+	}
 	// 1. Charger le fichier HTML du template
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {

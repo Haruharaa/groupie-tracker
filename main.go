@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"groupie-tracker/api"
 	"html/template"
 	"log"
 	"net/http"
-
-	"groupie-tracker/api"
+	"strconv"
 )
 
 // data contient toutes les données de l'API.
@@ -39,6 +39,29 @@ func accueil(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// pageArtiste affiche la page détail d'un artiste : /artist?id=3
+func pageArtiste(w http.ResponseWriter, r *http.Request) {
+	// 1. Lire l'id dans l'adresse
+	idTexte := r.URL.Query().Get("id")
+
+	// 2. Le convertir en nombre
+	id, err := strconv.Atoi(idTexte)
+	if err != nil {
+		http.Error(w, "Pas un nombre", http.StatusBadRequest)
+		return
+	}
+
+	// 3. Trouver l'artiste
+	artist, ok := api.FindArtist(data.Artists, id)
+	if !ok {
+		http.Error(w, "N'existe pas", http.StatusNotFound)
+		return
+	}
+
+	// 4. Pour l'instant, on affiche juste son nom en texte
+	fmt.Fprintf(w, "Page de %s\n", artist.Name)
+}
+
 func main() {
 	// 1. Charger toutes les données de l'API dans la variable globale.
 	var err error
@@ -52,6 +75,7 @@ func main() {
 	// Les fichiers du dossier statics (CSS, images) sont servis à l'adresse /statics/
 	http.Handle("/statics/", http.StripPrefix("/statics/", http.FileServer(http.Dir("statics"))))
 	http.HandleFunc("/", accueil)
+	http.HandleFunc("/artist", pageArtiste)
 
 	// 3. Démarrer le serveur.
 	fmt.Println("Le serveur est lancé sur http://localhost:8080")

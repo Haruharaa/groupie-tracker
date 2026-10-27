@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -12,12 +13,26 @@ import (
 // Elle est déclarée hors de toute fonction : main la remplit, les handlers la lisent.
 var data api.DataAPI
 
+// accueil affiche la page d'accueil avec la liste de tous les artistes.
 func accueil(w http.ResponseWriter, r *http.Request) {
-	if len(data.Artists) == 0 {
-		fmt.Fprintln(w, "Aucun artiste n'a été chargé.")
+	// 1. Charger le fichier HTML du template
+	tmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		// Fichier absent ou faute de syntaxe dans le HTML : erreur 500 pour le visiteur,
+		// mais le serveur continue de tourner pour les autres
+		log.Println("erreur de chargement du template :", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "%d artistes chargés. Le premier est %s.\n", len(data.Artists), data.Artists[0].Name)
+
+	// 2. Remplir le template avec la liste des artistes et l'envoyer au navigateur.
+	// Dans index.html, le {{ range . }} parcourt cette liste.
+	err = tmpl.Execute(w, data.Artists)
+	if err != nil {
+		log.Println("erreur d'affichage du template :", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
 }
 
 func main() {
@@ -28,8 +43,10 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(len(data.Artists), "artistes chargés")
-	
+
 	// 2. Relier les routes aux handlers.
+	// Les fichiers du dossier statics (CSS, images) sont servis à l'adresse /statics/
+	http.Handle("/statics/", http.StripPrefix("/statics/", http.FileServer(http.Dir("statics"))))
 	http.HandleFunc("/", accueil)
 
 	// 3. Démarrer le serveur.

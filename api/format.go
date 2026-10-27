@@ -16,10 +16,13 @@ func FormatLocation(location string) string {
 	}
 	city := capitalizeWords(parts[0])
 
-	country := capitalizeWords(parts[1])
+	country := parts[1]
 	if len(country) <= 3 {
-
+		country = strings.ToUpper(country)
+	} else {
+		country = capitalizeWords(country)
 	}
+	return city + ", " + country
 }
 
 // capitalize met une majuscule au début de chaque mot (merci captain obvious)

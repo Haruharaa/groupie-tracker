@@ -1,0 +1,24 @@
+# ===== Fichiers compilés par Go =====
+# go build crée un programme exécutable : chacun peut le recréer depuis le code
+*.exe
+*.exe~
+groupie-tracker
+
+# ===== Fichiers de test et de profilage générés par Go =====
+*.test
+*.out
+
+# ===== Réglages des éditeurs (propres à chaque personne) =====
+.vscode/
+.idea/
+
+# ===== Fichiers créés automatiquement par les systèmes =====
+# Windows
+Thumbs.db
+desktop.ini
+# Mac
+.DS_Store
+
+# ===== Fichiers temporaires et de logs =====
+*.log
+*.tmp

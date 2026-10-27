@@ -17,14 +17,16 @@ h1 {
 
 h2 {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    color: #323348;
+    color: #a2a3b1;
 }
 
 p {
-    color: #11143c;
-    text-decoration: underline;
+    color: #d1d1d3;
 }
 
+#date{
+text-decoration: underline;
+}
 
 
 .grille {
@@ -32,7 +34,7 @@ p {
     grid-template-columns: repeat(3, 1fr);
     gap: 4px;
     border-style: groove;
-    border-width: 2px;
+    border-width: 4px;
     border-radius: 12px;
     border-color: #5e5e5f;
     margin: 0 auto;
@@ -40,7 +42,7 @@ p {
 
 /*On stylise les cartes simultanément*/
 .carte {
-    background: linear-gradient(120deg, #485ebe, #76a889, #a9b08b);
+    background: linear-gradient(120deg, #000000, #152037, #055d70);
     border-style: double;
     border-width: 2px;
     border-color: rgb(120, 120, 120);
@@ -48,10 +50,8 @@ p {
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
     font-size: small;
-    margin: 4px;
+    margin: 10px;
     margin-bottom: 10px;
-    max-width: 400px;
-    max-height: 400px;
 }
 
 img {

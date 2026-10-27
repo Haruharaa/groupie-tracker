@@ -13,6 +13,12 @@ import (
 // Elle est déclarée hors de toute fonction : main la remplit, les handlers la lisent.
 var data api.DataAPI
 
+// ArtistPage regroupe artist et relation
+type ArtistPage struct {
+	Artist   api.Artist
+	Relation api.Relations
+}
+
 // accueil affiche la page d'accueil avec la liste de tous les artistes.
 func accueil(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -57,9 +63,16 @@ func pageArtiste(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "N'existe pas", http.StatusNotFound)
 		return
 	}
-
-	// 4. Pour l'instant, on affiche juste son nom en texte
-	fmt.Fprintf(w, "Page de %s\n", artist.Name)
+	//trouver les concerts
+	relation, ok := api.FindRelation(data.Relations, id)
+	if !ok {
+		http.Error(w, "Concerts introuvables", http.StatusInternalServerError)
+		return
+	}
+	//5. Ranger l'artiste + les concerts ensemble
+	page := ArtistPage{Artist: artist, Relation: relation}
+	// 6. Pour l'instant, on affiche en texte le nom et le nombre de lieux
+	fmt.Fprintf(w, "%s : %d lieux de concerts\n", page.Artist.Name, len(page.Relation.DatesLocations))
 }
 
 func main() {

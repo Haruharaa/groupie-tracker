@@ -22,7 +22,7 @@ func fetchJSON(url string, target any) error {
 func FetchArtists() ([]Artist, error) {
 	var artists []Artist
 
-	err := fetchJSON("https://groupietrackers.herokuapp.com/api/artists", &artists)
+	err := fetchJSON("https://groupietrackers.01edu.ai/api/artists", &artists)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func FetchArtists() ([]Artist, error) {
 func FetchLocations() (LocationsIndex, error) {
 	var locations LocationsIndex
 
-	err := fetchJSON("https://groupietrackers.herokuapp.com/api/locations", &locations)
+	err := fetchJSON("https://groupietrackers.01edu.ai/api/locations", &locations)
 	if err != nil {
 		return LocationsIndex{}, err
 	}
@@ -44,7 +44,7 @@ func FetchLocations() (LocationsIndex, error) {
 func FetchDates() (DatesIndex, error) {
 	var dates DatesIndex
 
-	err := fetchJSON("https://groupietrackers.herokuapp.com/api/dates", &dates)
+	err := fetchJSON("https://groupietrackers.01edu.ai/api/dates", &dates)
 	if err != nil {
 		return DatesIndex{}, err
 	}
@@ -55,7 +55,7 @@ func FetchDates() (DatesIndex, error) {
 func FetchRelations() (RelationsIndex, error) {
 	var relations RelationsIndex
 
-	err := fetchJSON("https://groupietrackers.herokuapp.com/api/relation", &relations)
+	err := fetchJSON("https://groupietrackers.01edu.ai/api/relation", &relations)
 	if err != nil {
 		return RelationsIndex{}, err
 	}

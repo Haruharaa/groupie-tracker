@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Artist.Name }}</title>
+    <link rel="stylesheet" href="/statics/style.css">
+</head>
+<body>
+    <a href="/">← Retour à la liste</a>
+
+    <h1>{{ .Artist.Name }}</h1>
+    <img src="{{ .Artist.Image }}" alt="Photo de {{ .Artist.Name }}">
+
+    <p>Création : {{ .Artist.CreationDate }}</p>
+    <p>Premier album : {{ .Artist.FirstAlbum }}</p>
+
+    <h2>Membres</h2>
+    <ul>
+        {{ range .Artist.Members }}
+        <li>{{ . }}</li>
+        {{ end }}
+    </ul>
+</body>
+</html>

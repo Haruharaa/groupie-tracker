@@ -72,7 +72,18 @@ func pageArtiste(w http.ResponseWriter, r *http.Request) {
 	//5. Ranger l'artiste + les concerts ensemble
 	page := ArtistPage{Artist: artist, Relation: relation}
 	// 6. Pour l'instant, on affiche en texte le nom et le nombre de lieux
-	fmt.Fprintf(w, "%s : %d lieux de concerts\n", page.Artist.Name, len(page.Relation.DatesLocations))
+	tmpl, err := template.ParseFiles("templates/artist.html")
+	if err != nil {
+		log.Println("erreur de chargement du template :", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, page)
+	if err != nil {
+		log.Println("erreur d'affichage du template :", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
 }
 
 func main() {

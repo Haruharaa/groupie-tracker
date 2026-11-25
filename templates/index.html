@@ -10,10 +10,25 @@
     <link rel="stylesheet" href="/statics/style.css">
 </head>
 
-<header class="hdp"><h1>GROUPES MUSICAUX</h1></header>
 
 <body>
-    <div class="grille"> <!--la class="grille" regroupe l'ensemble des cartes des artistes et leurs infos-->
+    <header class="hdp"><h1>GROUPES MUSICAUX</h1></header>
+	<div class="page">
+	<aside class="sidebar"> <!--Ajout de la classe "sidebar" pour le style--> 
+        <form action="/search" method="get">
+        <h3>Rechercher un groupe :</h3>
+            <label for="search"> 🔎︎ </label>
+            <input type="text" id="search" name="search" placeholder="Nom du groupe">
+            <button type="submit">Rechercher</button>
+            <h4>Trier par :</h4>
+            <select name="filter">
+                <option value="name-asc">A-Z</option>
+                <option value="name-desc">Z-A</option>
+                <option value="creationDate">Date de création</option>
+            </select>
+        </form> 
+    </aside>
+   	<div class="grille"> 
         {{ range . }}
         <div class="carte">
             <h2>{{ .Name }}</h2>
@@ -23,6 +38,7 @@
             <p>{{ .Members }}</p>
         </div>
         {{ end }}
+	</div>
     </div>
 </body>
 </html>

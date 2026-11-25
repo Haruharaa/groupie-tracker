@@ -50,6 +50,17 @@ text-decoration: underline;
     margin: 0 auto;
 }
 
+.page {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 4px;
+}
+
+.sidebar {
+    background:#8b8b8b;
+    padding: 10px;
+}
+
 /*On stylise les cartes simultanément*/
 .carte {
     background: #1C1D1D;

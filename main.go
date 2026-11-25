@@ -71,8 +71,23 @@ func pageArtiste(w http.ResponseWriter, r *http.Request) {
 	}
 	//5. Ranger l'artiste + les concerts ensemble
 	page := ArtistPage{Artist: artist, Relation: relation}
-	// 6. Pour l'instant, on affiche en texte le nom et le nombre de lieux
-	fmt.Fprintf(w, "%s : %d lieux de concerts\n", page.Artist.Name, len(page.Relation.DatesLocations))
+		// Les fonctions Go que le template a le droit d'utiliser
+	funcs := template.FuncMap{
+		"formatLocation": api.FormatLocation, // "north_carolina-usa" → "North Carolina, USA"
+		"cleanDate":      api.CleanDate,      // "*23-08-2019" → "23-08-2019"
+	}
+	tmpl, err := template.New("artist.html").Funcs(funcs).ParseFiles("templates/artist.html")
+	if err != nil {
+		log.Println("erreur de chargement du template :", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, page)
+	if err != nil {
+		log.Println("erreur d'affichage du template :", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
 }
 
 func main() {

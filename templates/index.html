@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Groupie Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Ink:wght@100..900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bitcount+Ink:wght@100..900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Space+Grotesk:wght@300..700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/statics/style.css">
 </head>
 
+<header class="hdp">
+    <h1>GROUPES MUSICAUX</h1>
+</header>
 
 <body>
     <header class="hdp"><h1>GROUPES MUSICAUX</h1></header>
@@ -30,15 +36,22 @@
     </aside>
    	<div class="grille"> 
         {{ range . }}
-        <div class="carte">
-            <h2>{{ .Name }}</h2>
-            <img src="{{ .Image }}" alt="Photo du Groupe">
-            <p id="date">{{ .CreationDate }}</p>
-            <p>{{ .FirstAlbum }}</p>
-            <p>{{ .Members }}</p>
-        </div>
+        <a href="/artist?id={{ .ID }}"> <!-- Lien vers la page de détail de l'artiste -->
+            <div class="carte">
+                <h2>{{ .Name }}</h2>
+                <img src="{{ .Image }}" alt="Photo du Groupe">
+                <p id="date">{{ .CreationDate }}</p>
+                <p>{{ .FirstAlbum }}</p>
+                <ul>
+                    {{ range .Members }}
+                    <li>{{ . }}</li>
+                    {{ end }}
+                </ul>
+            </div>
+        </a>
         {{ end }}
 	</div>
     </div>
 </body>
+
 </html>

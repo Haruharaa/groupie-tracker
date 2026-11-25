@@ -7,28 +7,49 @@
     <link rel="stylesheet" href="/statics/style.css">
 </head>
 <body>
-    <a href="/">← Retour à la liste</a>
+    <div class="artist-page">
+        <a href="/" class="retour">← Retour à la liste</a>
 
-    <h1>{{ .Artist.Name }}</h1>
-    <img src="{{ .Artist.Image }}" alt="Photo de {{ .Artist.Name }}">
+        <div class="artist-info">
+            <h1>{{ .Artist.Name }}</h1>
+            <img src="{{ .Artist.Image }}" alt="Photo de {{ .Artist.Name }}">
 
-    <p>Création : {{ .Artist.CreationDate }}</p>
-    <p>Premier album : {{ .Artist.FirstAlbum }}</p>
+            <p class="creation-date">Création : {{ .Artist.CreationDate }}</p>
+            <p class="first-album">Premier album : {{ .Artist.FirstAlbum }}</p>
 
-    <h2>Membres</h2>
-    <ul>
-        {{ range .Artist.Members }}
-        <li>{{ . }}</li>
-        {{ end }}
-    </ul>
-    <h2>Concerts</h2>
-    {{ range $lieu, $dates := .Relation.DatesLocations }}
-        <h3>{{ formatLocation $lieu }}</h3>          <!-- le lieu, rendu lisible avec formatLocation -->
-        <ul>
-            {{ range $dates }}   <!-- parcourir les dates de CE lieu -->
-                <li>{{ cleanDate . }}</li>  <!-- la date courante, nettoyée avec cleanDate -->
+            <div class="members">
+            <h2>Membres</h2>
+            {{ if .Artist.Members }}
+            <ul>
+                {{ range .Artist.Members }}
+                <li>{{ . }}</li>
+                {{ end }}
+            </ul>
+            </div>
+            {{ else }}
+            <p>Aucun membre renseigné.</p>
             {{ end }}
-        </ul>
-    {{ end }}
+        </div>
+
+        <div class="concerts">
+            <h2>Concerts</h2>
+            {{ if .Relation.DatesLocations }}
+            <div class="concerts-grille">
+                {{ range $lieu, $dates := .Relation.DatesLocations }}
+                <div class="concert-carte">
+                    <h3>{{ formatLocation $lieu }}</h3>
+                    <ul>
+                        {{ range $dates }}
+                        <li>{{ cleanDate . }}</li>
+                        {{ end }}
+                    </ul>
+                </div>
+                {{ end }}
+            </div>
+            {{ else }}
+            <p>Aucun concert prévu pour le moment.</p>
+            {{ end }}
+        </div>
+    </div>
 </body>
 </html>

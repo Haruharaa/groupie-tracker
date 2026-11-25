@@ -21,5 +21,14 @@
         <li>{{ . }}</li>
         {{ end }}
     </ul>
+    <h2>Concerts</h2>
+    {{ range $lieu, $dates := .Relation.DatesLocations }}
+        <h3>{{ formatLocation $lieu }}</h3>          <!-- le lieu, rendu lisible avec formatLocation -->
+        <ul>
+            {{ range $dates }}   <!-- parcourir les dates de CE lieu -->
+                <li>{{ cleanDate . }}</li>  <!-- la date courante, nettoyée avec cleanDate -->
+            {{ end }}
+        </ul>
+    {{ end }}
 </body>
 </html>

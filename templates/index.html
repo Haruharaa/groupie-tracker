@@ -15,13 +15,15 @@
 <body>
     <div class="grille"> <!--la class="grille" regroupe l'ensemble des cartes des artistes et leurs infos-->
         {{ range . }}
-        <div class="carte">
-            <h2>{{ .Name }}</h2>
-            <img src="{{ .Image }}" alt="Photo du Groupe">
-            <p id="date">{{ .CreationDate }}</p>
-            <p>{{ .FirstAlbum }}</p>
-            <p>{{ .Members }}</p>
-        </div>
+        <a href="/artist?id={{ .ID }}"> <!-- Lien vers la page de détail de l'artiste -->
+            <div class="carte">
+                <h2>{{ .Name }}</h2>
+                <img src="{{ .Image }}" alt="Photo du Groupe">
+                <p id="date">{{ .CreationDate }}</p>
+                <p>{{ .FirstAlbum }}</p>
+                <p>{{ .Members }}</p>
+            </div>
+        </a>
         {{ end }}
     </div>
 </body>

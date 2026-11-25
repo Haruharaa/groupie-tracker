@@ -56,11 +56,12 @@ text-decoration: underline;
 }
 
 .sidebar {
-    background: #282929;
+    background: #111415;
     padding: 10px;
 }
 
 .recherche {
+    background-color: #1C1D1D;
     color : #E65340;
     border-style: double;
     border-width: 2px;

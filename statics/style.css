@@ -4,23 +4,44 @@ body {
 }
 
 .hdp {
+    min-height: 105px;
+    background-image: url('/statics/banniere.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-color: #1C1D1D;
-    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
 }
+
+
+
+.ti {
+    text-align: center;
+    text-shadow: 0px 0px #E65340;
+    justify-content: center;
+    display: flex;
+    flex: 1;
+}
+    
 
 /*On customise le style du titre du site*/
 h1 {
+    position: absolute;
     text-align: center;
     text-decoration: underline;
     text-underline-offset: 8px;
     text-decoration-thickness: 2px;
     text-decoration-color: #8e483d;
-    background: #E65340;
+    background: #000000;
     background-clip: text;
     color: transparent;
     font-size: 50px;
-    font-weight: 500;
+    font-weight: 600;
     font-family: "Bitcount Ink", serif;
+}
 }
 
 h2 {
@@ -58,6 +79,7 @@ text-decoration: underline;
 .sidebar {
     background: #111415;
     padding: 10px;
+    border-radius: 11px;
 }
 
 .recherche {
@@ -71,16 +93,18 @@ text-decoration: underline;
     padding : 5px;
     padding-left: 10px;
     padding-bottom: 20px;
-
 }
+
 
 /*On stylise les cartes simultanément*/
 .carte {
+    height: 463px;
     background: #1C1D1D;
     border-style: double;
     border-width: 2px;
     border-color: #E65340;
     border-radius: 11px;
+    border-bottom-width: 6px;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
     font-size: small;
@@ -123,6 +147,7 @@ img {
     border-width: 2px;
     border-color: #E65340;
     border-radius: 11px;
+    display: flex;
 }
 
 .creation-date, .first-album {

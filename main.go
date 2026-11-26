@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // data contient toutes les données de l'API.
@@ -17,6 +18,12 @@ var data api.DataAPI
 type ArtistPage struct {
 	Artist   api.Artist
 	Relation api.Relations
+}
+// HomePage regroupe ce que la page d'accueil doit afficher.
+type HomePage struct {
+	Artists []api.Artist // les artistes à afficher (après recherche et tri)
+	Query   string       // le texte tapé dans la recherche
+	Order   string       // le tri choisi : "name-asc", "name-desc" ou "creationDate"
 }
 
 // accueil affiche la page d'accueil avec la liste de tous les artistes.
@@ -34,10 +41,21 @@ func accueil(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
 		return
 	}
+	// 2. Choisir les artistes à afficher : tous, ou les résultats de la recherche
+	query := strings.TrimSpace(r.URL.Query().Get("search"))
 
-	// 2. Remplir le template avec la liste des artistes et l'envoyer au navigateur.
-	// Dans index.html, le {{ range . }} parcourt cette liste.
-	err = tmpl.Execute(w, data.Artists)
+	artists := data.Artists // par défaut : tous les artistes
+	if query != "" {
+		artists = api.SearchArtists(data.Artists, query) // si une recherche a été tapée : seulement les résultats
+	}
+
+	// 3. Trier la liste selon le choix du menu (A-Z, Z-A ou date de création)
+	order := r.URL.Query().Get("filter")      // "name-asc", "name-desc", "creationDate", ou "" si rien
+	artists = api.SortArtists(artists, order) // renvoie une copie triée
+
+		// 4. Ranger les artistes, la recherche et le tri dans le sac, puis afficher
+	page := HomePage{Artists: artists, Query: query, Order: order}
+	err = tmpl.Execute(w, page)
 	if err != nil {
 		log.Println("erreur d'affichage du template :", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -71,7 +89,7 @@ func pageArtiste(w http.ResponseWriter, r *http.Request) {
 	}
 	//5. Ranger l'artiste + les concerts ensemble
 	page := ArtistPage{Artist: artist, Relation: relation}
-		// Les fonctions Go que le template a le droit d'utiliser
+	// Les fonctions Go que le template a le droit d'utiliser
 	funcs := template.FuncMap{
 		"formatLocation": api.FormatLocation, // "north_carolina-usa" → "North Carolina, USA"
 		"cleanDate":      api.CleanDate,      // "*23-08-2019" → "23-08-2019"

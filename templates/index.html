@@ -18,40 +18,41 @@
 </header>
 
 <body>
-	<div class="page">
-	<aside class="sidebar"> <!--Ajout de la classe "sidebar" pour le style--> 
-        <form action="/search" method="get">
-            <div class="recherche">
-        <h3>Rechercher un groupe :</h3>
-            <label for="search"> 🔎︎ </label>
-            <input type="text" id="search" name="search" placeholder="Nom du groupe">
-            <button type="submit">Rechercher</button>
-            <h4>Trier par :</h4>
-            <select name="filter">
-                <option value="name-asc">A-Z</option>
-                <option value="name-desc">Z-A</option>
-                <option value="creationDate">Date de création</option>
-            </select>
-            </div>
-        </form> 
-    </aside>
-   	<div class="grille"> 
-        {{ range . }}
-        <a href="/artist?id={{ .ID }}"> <!-- Lien vers la page de détail de l'artiste -->
-            <div class="carte">
-                <h2>{{ .Name }}</h2>
-                <img src="{{ .Image }}" alt="Photo du Groupe">
-                <p id="date">{{ .CreationDate }}</p>
-                <p>{{ .FirstAlbum }}</p>
-                <ul>
-                    {{ range .Members }}
-                    <li>{{ . }}</li>
-                    {{ end }}
-                </ul>
-            </div>
-        </a>
-        {{ end }}
-	</div>
+    <div class="page">
+        <aside class="sidebar"> <!--Ajout de la classe "sidebar" pour le style-->
+            <form action="/" method="get">
+                <div class="recherche">
+                    <h3>Rechercher un groupe :</h3>
+                    <label for="search"> 🔎︎ </label>
+                    <input type="text" id="search" name="search" placeholder="Nom du groupe" value="{{ .Query }}">
+                    <button type="submit">Rechercher</button>
+                    <h4>Trier par :</h4>
+                    <select name="filter" onchange="this.form.submit()">
+                        <option value="name-asc" {{ if eq .Order "name-asc" }}selected{{ end }}>A-Z</option>
+                        <option value="name-desc" {{ if eq .Order "name-desc" }}selected{{ end }}>Z-A</option>
+                        <option value="creationDate" {{ if eq .Order "creationDate" }}selected{{ end }}>Date de création
+                        </option>
+                    </select>
+                </div>
+            </form>
+        </aside>
+        <div class="grille">
+            {{ range .Artists }} <!-- Parcourt la liste des artistes et affiche chaque artiste -->
+            <a href="/artist?id={{ .ID }}"> <!-- Lien vers la page de détail de l'artiste -->
+                <div class="carte">
+                    <h2>{{ .Name }}</h2>
+                    <img src="{{ .Image }}" alt="Photo du Groupe">
+                    <p id="date">{{ .CreationDate }}</p>
+                    <p>{{ .FirstAlbum }}</p>
+                    <ul>
+                        {{ range .Members }}
+                        <li>{{ . }}</li>
+                        {{ end }}
+                    </ul>
+                </div>
+            </a>
+            {{ end }}
+        </div>
     </div>
 </body>
 

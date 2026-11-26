@@ -5,7 +5,7 @@ body {
 
 .hdp {
     min-height: 105px;
-    background-image: url('/statics/banniere.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/statics/banniere.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -20,7 +20,6 @@ body {
 
 .ti {
     text-align: center;
-    text-shadow: 0px 0px #E65340;
     justify-content: center;
     display: flex;
     flex: 1;
@@ -29,28 +28,33 @@ body {
 
 /*On customise le style du titre du site*/
 h1 {
-    position: absolute;
     text-align: center;
     text-decoration: underline;
     text-underline-offset: 8px;
     text-decoration-thickness: 2px;
     text-decoration-color: #8e483d;
-    background: #000000;
-    background-clip: text;
-    color: transparent;
     font-size: 50px;
     font-weight: 600;
-    font-family: "Bitcount Ink", serif;
-}
+    font-family: "Bebas Neue", sans-serif;
+    color: #E65340;
+    text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
 }
 
+h3, h4, li {
+    font-family: "Space Grotesk", sans-serif;
+}
+
+
 h2 {
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: "Space Grotesk", sans-serif;
     color: #e8d7c6;
+    text-align: center;
+    margin-top: 30px;
 }
 
 p {
     color: #8b8b8b;
+    font-family: "Space Grotesk", sans-serif;
 }
 
 #date{
@@ -59,9 +63,11 @@ text-decoration: underline;
 
 
 .grille {
+    background-color: #111415;
     display: grid ;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 4px;
+    width: 95%;
     padding-top: 20px;
     border-style: groove;
     border-width: 1px;
@@ -82,12 +88,12 @@ text-decoration: underline;
     border-radius: 11px;
 }
 
+
 .recherche {
     background-color: #1C1D1D;
     color : #E65340;
     border-style: double;
     border-width: 2px;
-    border-color: linear-gradient(90deg, red, black);
     border-radius: 11px;
     text-align: left;
     padding : 5px;
@@ -98,7 +104,7 @@ text-decoration: underline;
 
 /*On stylise les cartes simultanément*/
 .carte {
-    height: 463px;
+    height: 470px;
     background: #1C1D1D;
     border-style: double;
     border-width: 2px;
@@ -113,7 +119,7 @@ text-decoration: underline;
 }
 
 img {
-    max-width: 200px;
+    max-width: 100%;
     max-height: 200px;
     margin: 3px;
     border-radius: 5px;
@@ -133,21 +139,24 @@ img {
 }
 
 .artist-info, .concert-carte {
-    background: #1C1D1D;
+    background: #111415;
     border-style: double;
-    border-width: 2px;
-    border-color: #505050;
-    border-radius: 11px;
-    padding: 20px;
-    text-align: center;
-}
-
-.members {
-    border-style: dotted;
     border-width: 2px;
     border-color: #E65340;
     border-radius: 11px;
-    display: flex;
+    padding: 20px;
+    text-align: center;
+    margin: 10px;
+}
+
+.members {
+    background-color: #1C1D1D;
+    border-style: double;
+    border-width: 2px;
+    border-color: #E65340;
+    border-radius: 11px;
+    border-bottom-width: 6px;
+    text-align: center;
 }
 
 .creation-date, .first-album {
